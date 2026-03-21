@@ -1,6 +1,6 @@
-import { motion, useScroll, useTransform } from "motion/react";
-import { ArrowUpRight, Shield, Code2, Sparkles, Layout, Check } from "lucide-react";
-import React, { useRef } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
+import { ArrowUpRight, Shield, Code2, Sparkles, Layout, Check, Menu, X } from "lucide-react";
+import React, { useRef, useState } from "react";
 
 export default function App() {
   return (
@@ -21,17 +21,64 @@ export default function App() {
 }
 
 function Nav() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const menuItems = [
+    { href: "#work", label: "Work" },
+    { href: "#services", label: "Services" },
+    { href: "#pricing", label: "Pricing" },
+    { href: "#contact", label: "Contact" },
+  ];
+
   return (
-    <nav className="fixed top-0 left-0 w-full p-6 md:p-12 flex justify-between items-center z-50 mix-blend-difference text-white">
-      <div className="font-display text-xl font-bold tracking-tighter uppercase">Deteroid</div>
-      <div className="hidden md:flex items-center gap-8 text-sm uppercase tracking-widest font-medium">
-        <a href="#work" className="hover:text-[#00f0ff] transition-colors">Work</a>
-        <a href="#services" className="hover:text-[#00f0ff] transition-colors">Services</a>
-        <a href="#pricing" className="hover:text-[#00f0ff] transition-colors">Pricing</a>
-        <a href="#contact" className="hover:text-[#00f0ff] transition-colors">Contact</a>
-      </div>
-      <button className="md:hidden text-sm uppercase tracking-widest font-medium hover:opacity-70 transition-opacity">Menu</button>
-    </nav>
+    <>
+      <nav className="fixed top-0 left-0 w-full p-6 md:p-12 flex justify-between items-center z-50 mix-blend-difference text-white">
+        <div className="font-display text-xl font-bold tracking-tighter uppercase">Deteroid</div>
+        <div className="hidden md:flex items-center gap-8 text-sm uppercase tracking-widest font-medium">
+          {menuItems.map((item) => (
+            <a key={item.href} href={item.href} className="hover:text-[#00f0ff] transition-colors">
+              {item.label}
+            </a>
+          ))}
+        </div>
+        <button 
+          onClick={() => setIsOpen(!isOpen)}
+          className="md:hidden text-sm uppercase tracking-widest font-medium hover:opacity-70 transition-opacity z-50"
+          aria-label="Toggle menu"
+        >
+          {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+      </nav>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+            className="fixed top-0 right-0 w-full h-screen bg-black/95 backdrop-blur-xl z-40 md:hidden"
+          >
+            <div className="flex flex-col items-center justify-center h-full gap-8">
+              {menuItems.map((item, i) => (
+                <motion.a
+                  key={item.href}
+                  href={item.href}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  onClick={() => setIsOpen(false)}
+                  className="text-4xl font-display font-bold tracking-tighter hover:text-[#00f0ff] transition-colors"
+                >
+                  {item.label}
+                </motion.a>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 
@@ -56,9 +103,9 @@ function Hero() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="font-display text-[15vw] leading-[0.8] tracking-tighter font-bold uppercase text-center"
+          className="font-display text-[12vw] md:text-[10vw] leading-[0.85] tracking-tighter font-bold text-center max-w-6xl"
         >
-          Deteroid
+          Where Vision<br/>Meets<br/>Execution
         </motion.h1>
         
         <motion.p 
@@ -67,7 +114,7 @@ function Hero() {
           transition={{ delay: 0.7, duration: 1 }}
           className="mt-8 text-lg md:text-2xl font-light text-white/70 max-w-2xl text-center"
         >
-          Engineering digital fortresses that captivate users and dominate markets.
+          We craft digital experiences that don't just exist—they command attention, inspire action, and leave lasting impressions.
         </motion.p>
 
         <motion.div 
@@ -77,10 +124,10 @@ function Hero() {
           className="mt-12 flex flex-col sm:flex-row gap-6 z-20"
         >
           <button className="bg-[#00f0ff] text-black px-8 py-4 rounded-full font-medium uppercase tracking-widest hover:bg-white transition-colors cursor-pointer">
-            View Our Work
+            Explore Our Work
           </button>
           <button className="border border-white/20 bg-black/50 backdrop-blur-md px-8 py-4 rounded-full font-medium uppercase tracking-widest hover:bg-white/10 transition-colors text-white cursor-pointer">
-            Get a Quote
+            Start Your Project
           </button>
         </motion.div>
 
@@ -154,7 +201,7 @@ function Tagline() {
       </div>
       <div className="mt-24 md:mt-32 max-w-2xl ml-auto">
         <p className="text-xl md:text-3xl font-light leading-relaxed text-white/70">
-          We don't just build websites. We engineer digital fortresses that captivate users and dominate markets. Built from scratch. Built to last.
+          Every pixel tells a story. Every interaction builds trust. Every line of code strengthens your foundation. We don't just build websites—we architect digital experiences that transform visitors into believers and believers into champions.
         </p>
       </div>
     </section>
@@ -164,22 +211,22 @@ function Tagline() {
 const services = [
   {
     title: "Web Design",
-    description: "Immersive, award-winning interfaces that command attention and drive conversion.",
+    description: "Interfaces that breathe life into your brand. We design experiences that feel intuitive, look stunning, and convert effortlessly—because beauty and function aren't mutually exclusive.",
     icon: Layout,
   },
   {
     title: "Development",
-    description: "High-performance, scalable architectures built with cutting-edge modern stacks.",
+    description: "Code that scales with your ambition. From lightning-fast performance to bulletproof architecture, we build digital foundations that grow stronger as your business expands.",
     icon: Code2,
   },
   {
     title: "AI Integration",
-    description: "Intelligent systems and autonomous agents that multiply your operational capabilities.",
+    description: "Intelligence that works while you sleep. We embed AI that learns, adapts, and amplifies your team's capabilities—turning data into decisions and automation into advantage.",
     icon: Sparkles,
   },
   {
     title: "Security",
-    description: "Military-grade protection, auditing, and hardening for your digital assets.",
+    description: "Protection you can trust, invisibly. We fortify every layer of your digital presence so you can focus on growth, not threats—because peace of mind is priceless.",
     icon: Shield,
   },
 ];
@@ -276,9 +323,9 @@ function Work() {
 }
 
 const plans = [
-  { name: "Ignite", price: "$10k", desc: "For startups ready to launch.", features: ["Brand Identity", "Landing Page", "Basic Security"] },
-  { name: "Ascend", price: "$25k", desc: "For growing companies.", features: ["Full Web App", "Custom AI Integration", "Advanced Security Audit"] },
-  { name: "Fortress", price: "Custom", desc: "Enterprise-grade solutions.", features: ["Dedicated Team", "Military-grade Security", "Continuous Optimization"] }
+  { name: "Ignite", price: "$10k", desc: "For startups ready to make their mark.", features: ["Brand Identity & Strategy", "High-Converting Landing Page", "Essential Security Foundation"] },
+  { name: "Ascend", price: "$25k", desc: "For companies scaling with purpose.", features: ["Full-Stack Web Application", "Custom AI Integration", "Comprehensive Security Audit"] },
+  { name: "Fortress", price: "Custom", desc: "For enterprises demanding excellence.", features: ["Dedicated Engineering Team", "Enterprise-Grade Security", "Ongoing Optimization & Support"] }
 ];
 
 function Pricing() {
@@ -287,7 +334,7 @@ function Pricing() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-24">
           <h2 className="font-display text-5xl md:text-7xl font-bold tracking-tighter mb-6">Investment</h2>
-          <p className="text-white/50 text-lg uppercase tracking-widest">Transparent pricing for world-class engineering</p>
+          <p className="text-white/50 text-lg uppercase tracking-widest">Clear pricing. Exceptional value. Zero surprises.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {plans.map((plan) => (
@@ -317,8 +364,8 @@ function Contact() {
     <section id="contact" className="py-32 px-6 md:px-12 bg-[#050505] text-white relative z-20 border-t border-white/10">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-24">
         <div>
-          <h2 className="font-display text-5xl md:text-7xl font-bold tracking-tighter mb-8">Ready to<br/>dominate?</h2>
-          <p className="text-xl text-white/60 mb-12 max-w-md">Drop us a line. We typically respond within 24 hours to discuss your project requirements.</p>
+          <h2 className="font-display text-5xl md:text-7xl font-bold tracking-tighter mb-8">Let's build<br/>something<br/>remarkable</h2>
+          <p className="text-xl text-white/60 mb-12 max-w-md">Every great project starts with a conversation. Share your vision with us, and we'll respond within 24 hours with insights, ideas, and a clear path forward.</p>
           <div className="flex flex-col gap-6 font-mono text-sm opacity-60">
             <p>hello@deteroid.agency</p>
             <p>+1 (555) 000-0000</p>
@@ -336,9 +383,9 @@ function Contact() {
           </div>
           <div className="flex flex-col gap-2">
             <label className="text-sm uppercase tracking-widest opacity-50 font-medium">Project Details</label>
-            <textarea className="bg-transparent border-b border-white/20 pb-4 text-xl focus:outline-none focus:border-[#00f0ff] transition-colors resize-none h-32 rounded-none" placeholder="Tell us about your vision..."></textarea>
+            <textarea className="bg-transparent border-b border-white/20 pb-4 text-xl focus:outline-none focus:border-[#00f0ff] transition-colors resize-none h-32 rounded-none" placeholder="What's your vision? What problem are you solving?"></textarea>
           </div>
-          <button className="bg-white text-black px-8 py-4 rounded-full font-medium uppercase tracking-widest hover:bg-[#00f0ff] transition-colors self-start mt-4 cursor-pointer">Send Message</button>
+          <button className="bg-white text-black px-8 py-4 rounded-full font-medium uppercase tracking-widest hover:bg-[#00f0ff] transition-colors self-start mt-4 cursor-pointer">Start the Conversation</button>
         </form>
       </div>
     </section>
